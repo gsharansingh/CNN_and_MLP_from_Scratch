@@ -1,4 +1,4 @@
-# CNN_and_MLP_from_Scratch
+# CNN and MLP from Scratch
 Image Detection Algorithm is created by using Convolutional Neural Networks (CNN) and Multilayer Perceptron with Backpropagation Algorithms from Scratch
 
 ## Table of contents
@@ -6,7 +6,9 @@ Image Detection Algorithm is created by using Convolutional Neural Networks (CNN
 * [Technologies](#theoratical-concept-of-the-algorithm)
   * [Reducing the Image Size](#reducing-the-image-size)
   * [Extracting the features of Image using Convolutional Neural Network](#extracting-the-features-of-image-using-convolutional-neural-network)
-* [](#setup)
+  * [Multilayer perceptron (Forward Propagation)](multilayer-perceptron-forward-propagation)
+  * [Multilayer perceptron (Back-Propagation)](multilayer-perceptron-back-propagation)
+* [References](#references)
 
 ### General info
 This project is implementing the concept of Convolutional Neural Networks and Multilayer Perceptron to detect the number in the image (the number should be ranging between 1 to 5). The algorithm is built from scratch by using the theoretical knowledge of the Convolutional Neural Networks and Multilayer Perceptron. This is not a customized algorithm, which means it may not give good results. 
@@ -77,11 +79,22 @@ As it can be seen from the image above that a multilayer perceptron have an inpu
 
 Operations at different layers:
 
-<img src="raw%20images/forward.png" width="500">
+<img src="raw%20images/forward.png" width="700">
 
 ## Multilayer perceptron (Back-Propagation)
 It is used to provide the model with the ability of learning from error by using derivation and chain rule. The information is gathered from [3] and [4].
 
 The algorithm works like:
 
-<img src="raw%20images/backward.png" width="500">
+<img src="raw%20images/backward.png" width="700">
+
+##	References
+
+[1] 	R. Yamashita, M. Nishio, R. K. G. Do and K. Togashi, Convolutional neural networks: an overview and application in radiology. 
+
+[2] 	A. Escontrela, "Convolutional Neural Networks from the ground up," towards data science, 16 June 2018. [Online]. Available: https://towardsdatascience.com/convolutional-neural-networks-from-the-ground-up-c67bb41454e1. [Accessed March 2020].
+
+[3] 	D. E. Ruineihart, G. E. Hinton and R. J. Williams, "LEARNING INTERNAL REPRESENTATIONS BY ERROR PROPAGATION," COGNITIVE SCIENCE, 1985.
+
+[4] 	R. Rojas, "The Backpropagation Algorithm," in Neural Networks, Berlin, Springer-Verlag, 1996, pp. 151-184.
+
