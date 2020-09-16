@@ -6,8 +6,8 @@ Image Detection Algorithm is created by using Convolutional Neural Networks (CNN
 * [Technologies](#theoratical-concept-of-the-algorithm)
   * [Reducing the Image Size](#reducing-the-image-size)
   * [Extracting the features of Image using Convolutional Neural Network](#extracting-the-features-of-image-using-convolutional-neural-network)
-  * [Multilayer perceptron (Forward Propagation)](multilayer-perceptron-forward-propagation)
-  * [Multilayer perceptron (Back-Propagation)](multilayer-perceptron-back-propagation)
+  * [Multilayer perceptron (Forward Propagation)](#multilayer-perceptron-forward-propagation)
+  * [Multilayer perceptron (Back-Propagation)](#multilayer-perceptron-back-propagation)
 * [References](#references)
 
 ### General info
