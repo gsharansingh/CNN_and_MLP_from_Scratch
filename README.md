@@ -11,7 +11,7 @@ Image Detection Algorithm is created by using Convolutional Neural Networks (CNN
 * [References](#references)
 
 ### General info
-This project is implementing the concept of Convolutional Neural Networks and Multilayer Perceptron to detect the number in the image (the number should be ranging between 1 to 5). The algorithm is built from scratch by using the theoretical knowledge of the Convolutional Neural Networks and Multilayer Perceptron. This is not a customized algorithm, which means it may not give good results. 
+This project is implementing the concept of Convolutional Neural Networks and Multilayer Perceptron to detect the number in the image (the number should be ranging between 1 to 5). The algorithm is built from scratch by using the theoretical knowledge of the Convolutional Neural Networks and Multilayer Perceptron. This is not a optimized algorithm, which means it may not give good results. 
 
 ## Theoratical concept of the algorithm
 
