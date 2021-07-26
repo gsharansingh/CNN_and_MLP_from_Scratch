@@ -4,9 +4,16 @@ class Node(object):
     def __init__(self, in_nodes = []):
         self.in_nodes = in_nodes
         self.value = None
+        self.gradients = {}
         self.out_nodes = []
         for n in in_nodes:
             n.out_nodes.append(self)
+
+    def forward(self):
+        raise NotImplementedError
+
+    def backward(self):
+        raise NotImplementedError
 
 class Input(Node):
     def __init__(self):
@@ -14,6 +21,12 @@ class Input(Node):
 
     def forward(self):
         pass
+
+    def backward(self):
+        self.gradients[self] = 0
+        for n in self.out_nodes:
+            grad_value = n.gradients[self]
+            self.gradients[self] += grad_value * 1
 
 class Linear(Node):
     def __init__(self, X, W, b):
@@ -23,15 +36,39 @@ class Linear(Node):
         X = self.in_nodes[0].value
         W = self.in_nodes[1].value
         b = self.in_nodes[2].value
-        self.value = np.matmul(X, W.T) + b
+        self.value = np.dot(X, W.T) + b
 
 class Sigmoid(Node):
-    def __init__(self, a):
-        Node.__init__(self, [a])
+    def __init__(self, z):
+        Node.__init__(self, [z])
 
     def forward(self):
-        a = self.in_nodes[0].value
-        self.value = self._sigmoid(a)
+        z = self.in_nodes[0].value
+        self.value = self._sigmoid(z)
 
     def _sigmoid(self, x):
         return 1.0/(1.0 + np.exp(-x))
+
+    def backward(self):
+        self.gradients = {n: np.zeros_like(n.value) for n in self.in_nodes}
+        for n in self.outbound_nodes:
+            grad_cost = n.gradients[self]
+            sigmoid = self.value
+            self.gradients[self.in_nodes[0]] += sigmoid * (1 - sigmoid) * grad_cost
+
+class MSE(Node):
+    def __init__(self, y_hat, y):
+        Node.__init__(self, [y_hat, y])
+
+    def forward(self):
+        y_hat = self.in_nodes[0].value
+        y = self.in_nodes[1].value
+        self.m = self.in_nodes[0].value.shape[0]
+        self.diff = y_hat - y
+        self.value = (1/2) * np.mean(np.square(self.diff))
+
+    def backward(self):
+        self.gradients[self.inbound_nodes[0]] = (self.diff / self.m)
+        self.gradients[self.inbound_nodes[1]] = -(self.diff / self.m)
+
+    
