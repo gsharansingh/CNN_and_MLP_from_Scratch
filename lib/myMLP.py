@@ -36,7 +36,15 @@ class Linear(Node):
         X = self.in_nodes[0].value
         W = self.in_nodes[1].value
         b = self.in_nodes[2].value
-        self.value = np.dot(X, W.T) + b
+        self.value = np.dot(X, W) + b
+
+    def backward(self):
+        self.gradients = {n: np.zeros_like(n.value) for n in self.in_nodes}
+        for n in self.out_nodes:
+            grad_value = n.gradients[self]
+            self.gradients[self.in_nodes[0]] += np.dot(grad_value, self.in_nodes[1].value.T)
+            self.gradients[self.in_nodes[1]] += np.dot(self.in_nodes[0].value.T, grad_value)
+            self.gradients[self.in_nodes[2]] += np.sum(grad_value, axis=0, keepdims=False)
 
 class Sigmoid(Node):
     def __init__(self, z):
@@ -51,24 +59,22 @@ class Sigmoid(Node):
 
     def backward(self):
         self.gradients = {n: np.zeros_like(n.value) for n in self.in_nodes}
-        for n in self.outbound_nodes:
-            grad_cost = n.gradients[self]
+        for n in self.out_nodes:
+            grad_value = n.gradients[self]
             sigmoid = self.value
-            self.gradients[self.in_nodes[0]] += sigmoid * (1 - sigmoid) * grad_cost
+            self.gradients[self.in_nodes[0]] += sigmoid * (1 - sigmoid) * grad_value
 
 class MSE(Node):
     def __init__(self, y_hat, y):
         Node.__init__(self, [y_hat, y])
 
     def forward(self):
-        y_hat = self.in_nodes[0].value
-        y = self.in_nodes[1].value
+        y_hat = self.in_nodes[0].value.reshape(-1, 1)
+        y = self.in_nodes[1].value.reshape(-1, 1)
         self.m = self.in_nodes[0].value.shape[0]
         self.diff = y_hat - y
         self.value = (1/2) * np.mean(np.square(self.diff))
 
     def backward(self):
-        self.gradients[self.inbound_nodes[0]] = (self.diff / self.m)
-        self.gradients[self.inbound_nodes[1]] = -(self.diff / self.m)
-
-    
+        self.gradients[self.in_nodes[0]] = (self.diff / self.m)
+        self.gradients[self.in_nodes[1]] = -(self.diff / self.m)
