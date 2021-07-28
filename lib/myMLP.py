@@ -78,3 +78,49 @@ class MSE(Node):
     def backward(self):
         self.gradients[self.in_nodes[0]] = (self.diff / self.m)
         self.gradients[self.in_nodes[1]] = -(self.diff / self.m)
+
+def topological_sort(feed_dict):
+    input_nodes = [n for n in feed_dict.keys()]
+    G = {}
+    nodes = [n for n in input_nodes]
+    while len(nodes) > 0:
+        n = nodes.pop(0)
+        if n not in G:
+            G[n] = {'in': set(), 'out': set()}
+        for m in n.outbound_nodes:
+            if m not in G:
+                G[m] = {'in': set(), 'out': set()}
+            G[n]['out'].add(m)
+            G[m]['in'].add(n)
+            nodes.append(m)
+
+    L = []
+    S = set(input_nodes)
+    while len(S) > 0:
+        n = S.pop()
+
+        if isinstance(n, Input):
+            n.value = feed_dict[n]
+
+        L.append(n)
+        for m in n.outbound_nodes:
+            G[n]['out'].remove(m)
+            G[m]['in'].remove(n)
+            # if no other incoming edges add to S
+            if len(G[m]['in']) == 0:
+                S.add(m)
+    return L
+
+
+def forward_and_backward(graph):
+    # Forward pass
+    for n in graph:
+        n.forward()
+
+    # Backward pass
+    for n in graph[::-1]:
+        n.backward()
+
+class Sequential():
+    def __init__(self):
+        pass
