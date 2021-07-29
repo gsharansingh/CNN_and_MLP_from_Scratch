@@ -111,7 +111,6 @@ def topological_sort(feed_dict):
                 S.add(m)
     return L
 
-
 def forward_and_backward(graph):
     # Forward pass
     for n in graph:
@@ -122,5 +121,6 @@ def forward_and_backward(graph):
         n.backward()
 
 class Sequential():
-    def __init__(self):
-        pass
+    def __init__(self, *layers):
+        for layer in layers:
+            x = layer(x)
