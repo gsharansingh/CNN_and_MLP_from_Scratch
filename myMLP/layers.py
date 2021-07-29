@@ -119,8 +119,3 @@ def forward_and_backward(graph):
     # Backward pass
     for n in graph[::-1]:
         n.backward()
-
-class Sequential():
-    def __init__(self, *layers):
-        for layer in layers:
-            x = layer(x)
