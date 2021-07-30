@@ -2,22 +2,23 @@ import numpy as np
 import myMLP.layers as layers
 
 class Linear:
-    def __init__(self):
-        self.X = None
-        self.W = None
-        self.b = None
-    def call(self, X, W = None, b = None):
-        self.X = X
-        if W:
-            self.W = W
-        else:
-            self.W = 2*np.random.random((X.shape[1], hidden_units))-1
-        if b:
-            self.b = b
-        else:
-            self.b = 2*np.random.random((hidden_units, 1))-1
+    def __init__(self, n_hidden = 1):
+        self.X, self.W, self.b = layers.Input(), layers.Input(), layers.Input()
+        self.n_hidden = n_hidden
 
-        return layer.Linear(self.X, self.W, self.b)
+    def __call__(self, X_, W_ = None, b_ = None):
+        self.X.value = X_
+        n_features = X_.shape[1]
+        if W_:
+            self.W.value = W_
+        else:
+            self.W.value = 2*np.random.random((n_features, self.n_hidden))-1
+        if b_:
+            self.b.value = b_
+        else:
+            self.b.value = 2*np.random.random((self.n_hidden, 1))-1
+
+        return layers.Linear(self.X, self.W, self.b)
         
 
 class Sigmoid:
@@ -35,12 +36,9 @@ class Sigmoid:
 
 class Sequential:
     def __init__(self, *arg_layers):
+        first_layer = arg_layers.pop(0)
         for layer in arg_layers:
             pass
     
     def fit(self, X, y):
-        feed_dict = {
-            self.x = x,
-            self.y = y
-        }
-        graph = layers.topological_sort(feed_dict)
+        first_layer(X)
