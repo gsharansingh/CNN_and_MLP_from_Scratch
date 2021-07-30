@@ -81,13 +81,15 @@ class MSE(Node):
 
 def topological_sort(feed_dict):
     input_nodes = [n for n in feed_dict.keys()]
+    print(input_nodes)
     G = {}
     nodes = [n for n in input_nodes]
+    print(input_nodes)
     while len(nodes) > 0:
         n = nodes.pop(0)
         if n not in G:
             G[n] = {'in': set(), 'out': set()}
-        for m in n.outbound_nodes:
+        for m in n.out_nodes:
             if m not in G:
                 G[m] = {'in': set(), 'out': set()}
             G[n]['out'].add(m)
@@ -103,7 +105,7 @@ def topological_sort(feed_dict):
             n.value = feed_dict[n]
 
         L.append(n)
-        for m in n.outbound_nodes:
+        for m in n.out_nodes:
             G[n]['out'].remove(m)
             G[m]['in'].remove(n)
             # if no other incoming edges add to S

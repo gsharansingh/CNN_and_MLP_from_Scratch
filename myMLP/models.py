@@ -2,7 +2,12 @@ import numpy as np
 import myMLP.layers as layers
 
 class Linear:
-    def __init__(self, X, W = None, b = None):
+    def __init__(self):
+        self.X = None
+        self.W = None
+        self.b = None
+    def call(self, X, W = None, b = None):
+        self.X = X
         if W:
             self.W = W
         else:
@@ -11,6 +16,8 @@ class Linear:
             self.b = b
         else:
             self.b = 2*np.random.random((hidden_units, 1))-1
+
+        return layer.Linear(self.X, self.W, self.b)
         
 
 class Sigmoid:
