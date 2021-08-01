@@ -64,6 +64,30 @@ class Sigmoid(Node):
             sigmoid = self.value
             self.gradients[self.in_nodes[0]] += sigmoid * (1 - sigmoid) * grad_value
 
+class Softmax(Node):
+    def __init__(self, z):
+        Node.__init__(self, [z])
+
+    def forward(self):
+        z = self.in_nodes[0].value
+        self.value = self._softmax(z)
+        self.d_softmax(z)
+
+    def _softmax(self, x):
+        exps = np.exp(x - x.max())
+        return exps/np.sum(exps)
+
+    def d_softmax(self, x):
+        dx_ds = np.diag(x) - np.dot(x, x.T)
+        self.dx = dx_ds.sum(axis=0).reshape(-1,1)
+
+    def backward(self):
+        self.gradients = {n: np.zeros_like(n.value) for n in self.in_nodes}
+        for n in self.out_nodes:
+            grad_value = n.gradients[self]
+            softmax = self.value
+            self.gradients[self.in_nodes[0]] += self.dx * grad_value
+
 class MSE(Node):
     def __init__(self, y_hat, y):
         Node.__init__(self, [y_hat, y])
