@@ -9,7 +9,6 @@ class Linear:
 
     def __call__(self, X_, W_ = None, b_ = None):
         self.X.value = X_
-        print(X_.shape)
         n_features = X_.shape[1]
         if W_:
             self.W.value = W_
@@ -51,7 +50,6 @@ class Sequential:
         self.input_nodes = []
     
     def fit(self, X, y):
-        print(self.arg_layers[0])
         x = self.arg_layers[0](X)
         for layer in self.arg_layers[1:-1]:
             x = layer(x)
@@ -60,5 +58,13 @@ class Sequential:
             if layer.input_nodes:
                 self.input_nodes += layer.input_nodes
 
-        graph = layers.topological_sort_list(self.input_nodes)
-        layers.forward_and_backward(graph)
+        self.graph = layers.topological_sort_list(self.input_nodes)
+        layers.forward_and_backward(self.graph)
+
+    def predict(self, x):
+        self.graph[0].value = x
+        for n in self.graph[:-1]:
+            n.forward()
+
+        return self.graph[-1].value
+
