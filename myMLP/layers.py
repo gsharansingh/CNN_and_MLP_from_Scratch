@@ -103,6 +103,24 @@ class MSE(Node):
         self.gradients[self.in_nodes[0]] = (self.diff / self.m)
         self.gradients[self.in_nodes[1]] = -(self.diff / self.m)
 
+class CrossEntropy(Node):
+    def __init__(self, y_hat, y):
+        Node.__init__(self, [y_hat, y])
+
+    def forward(self):
+        y_hat = self.in_nodes[0].value.reshape(-1, 1)
+        y = self.in_nodes[1].value.reshape(-1, 1)
+        self.m = self.in_nodes[0].value.shape[0]
+        log_likelihood = -np.log(y_hat, y)
+        self.value = np.sum(log_likelihood) / m
+
+    def backward(self):
+        y_hat = self.in_nodes[0].value.reshape(-1, 1)
+        y = self.in_nodes[1].value.reshape(-1, 1)
+        y_hat[range(self.m), y] -= 1
+        self.gradients[self.in_nodes[0]] = (y_hat/self.m)
+        self.gradients[self.in_nodes[1]] = -(y_hat/self.m)
+
 def topological_sort(feed_dict):
     input_nodes = [n for n in feed_dict.keys()]
     print(input_nodes)
