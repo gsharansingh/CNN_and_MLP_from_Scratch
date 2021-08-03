@@ -36,6 +36,11 @@ class Linear(Node):
         X = self.in_nodes[0].value
         W = self.in_nodes[1].value
         b = self.in_nodes[2].value
+        print(X.shape)
+        print(W.shape)
+        print(b.shape)
+        print(np.matmul(X, W).shape)
+        print((np.dot(X, W)+b).shape)
         self.value = np.dot(X, W) + b
 
     def backward(self):
@@ -62,6 +67,8 @@ class Sigmoid(Node):
         for n in self.out_nodes:
             grad_value = n.gradients[self]
             sigmoid = self.value
+            print(sigmoid)
+            print(grad_value)
             self.gradients[self.in_nodes[0]] += sigmoid * (1 - sigmoid) * grad_value
 
 class Softmax(Node):
@@ -109,7 +116,7 @@ class CrossEntropy(Node):
 
     def forward(self):
         y_hat = self.in_nodes[0].value.reshape(-1, 1)
-        y = self.in_nodes[1].value.reshape(-1, 1)
+        y = self.in_nodes[1].value.reshape(-1, 1).astype(np.float32)
         self.m = self.in_nodes[0].value.shape[0]
         log_likelihood = -np.log(y_hat, y)
         self.value = np.sum(log_likelihood) / m
@@ -158,7 +165,6 @@ def topological_sort(feed_dict):
 def topological_sort_list(input_nodes):
     G = {}
     nodes = [n for n in input_nodes]
-    print(nodes)
     while len(nodes) > 0:
         n = nodes.pop(0)
         if n not in G:

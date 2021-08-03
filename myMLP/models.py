@@ -8,7 +8,7 @@ class Linear:
         self.input_nodes = [self.X, self.W, self.b]
 
     def __call__(self, X_, W_ = None, b_ = None):
-        self.X.value = X_
+        self.X.value = X_.astype(np.float32)
         n_features = X_.shape[1]
         if W_:
             self.W.value = W_
@@ -20,7 +20,6 @@ class Linear:
             self.b.value = 2*np.random.random((self.n_hidden, 1))-1
 
         return layers.Linear(self.X, self.W, self.b)
-        
 
 class Sigmoid:
     def __init__(self, in_nodes = None):
@@ -36,6 +35,20 @@ class Sigmoid:
         else:
             raise "Pass nodes through the layer"
 
+class Softmax:
+    def __init__(self, in_nodes = None):
+        self.input_nodes = None
+        if in_nodes:
+            self.obj = layers.Softmax(in_nodes)
+    
+    def __call__(self, in_nodes = None):
+        if in_nodes:
+            self.obj = layers.Softmax(in_nodes)
+        if self.obj:
+            return self.obj
+        else:
+            raise "Pass nodes through the layer"
+
 class MSE:
     def __init__(self):
         self.input_nodes = None
@@ -43,6 +56,14 @@ class MSE:
     def __call__(self, y_hat, y):
         self.Y.value = y
         return layers.MSE(y_hat, self.Y)
+
+class CrossEntropy:
+    def __init__(self):
+        self.input_nodes = None
+        self.Y = layers.Input()
+    def __call__(self, y_hat, y):
+        self.Y.value = y
+        return layers.CrossEntropy(y_hat, self.Y)
 
 class Sequential:
     def __init__(self, *arg_layers):
@@ -68,3 +89,12 @@ class Sequential:
 
         return self.graph[-1].value
 
+def batches(batch_size, features, labels):
+    assert len(features) == len(labels)
+    output_batches = []
+    sample_size = len(features)
+    for start_i in range(0, sample_size, batch_size):
+        end_i = start_i + batch_size
+        batch = [features[start_i:end_i], labels[start_i:end_i]]
+        output_batches.append(batch)
+    return output_batches
