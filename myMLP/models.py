@@ -98,3 +98,11 @@ def batches(batch_size, features, labels):
         batch = [features[start_i:end_i], labels[start_i:end_i]]
         output_batches.append(batch)
     return output_batches
+
+class Flatten:
+    def __init__(self):
+        self.data_2d = []
+    def __call__(self, data):
+        for i in data:
+            self.data_2d.append(i.reshape(1, -1))
+        return np.array(self.data_2d)
