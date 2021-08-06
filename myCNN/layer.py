@@ -19,19 +19,21 @@ class MaxPool:
     def __init__(self, pool_size = 2):
         self.pool_size = pool_size
     def __call__(self, data):
-        img_height = data.shape[0]
-        img_width = data.shape[1]
+        num_img = data.shape[0]
+        img_height = data.shape[1]
+        img_width = data.shape[2]
         new_img_height = int(img_height/self.pool_size)
         new_img_width = int(img_width/self.pool_size)
-        pooled_data = np.zeros((new_img_height, new_img_width)) #creating an array to store pooled/sampled data
+        pooled_data = np.zeros((num_img, new_img_height, new_img_width)) #creating an array to store pooled/sampled data
 
         #selecting the porition of the rectified data
-        for i in range (new_img_height):
-            h_index = self.pool_size*i
-            for j in range (new_img_width):
-                w_index = self.pool_size*j
-                # storing maximum value
-                pooled_data[i][j] = np.max(data[h_index: h_index+self.pool_size, w_index: w_index+self.pool_size])
+        for num in range(num_img):
+            for i in range (new_img_height):
+                h_index = self.pool_size*i
+                for j in range (new_img_width):
+                    w_index = self.pool_size*j
+                    # storing maximum value
+                    pooled_data[num][i][j] = np.max(data[num][h_index: h_index+self.pool_size, w_index: w_index+self.pool_size])
         return pooled_data
 
 class ConvLayer:
@@ -45,7 +47,6 @@ class ConvLayer:
         img_width = data.shape[1]
         conv_img_height = int((img_height-self.kernel_size)/self.stride)+1
         conv_img_width = int((img_width-self.kernel_size)/self.stride)+1
-        print(conv_img_height, conv_img_width)
         conv_data = np.zeros((self.num_kernels, conv_img_height, conv_img_width))
         #Convolve image with filter pixel by pixel
         for num in range(self.num_kernels):
@@ -55,3 +56,9 @@ class ConvLayer:
                     conv_data[num][i][j] = np.sum(temp)
         return conv_data
 
+class Normalize:
+    def __init__(self, type = 'binary'):
+        self.type = type
+    def __call__(self, data):
+        if (self.type == 'binary'):
+            return data/255.0
