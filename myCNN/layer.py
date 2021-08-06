@@ -1,14 +1,14 @@
 import numpy as np
 
 class Padding:
-    def __init__(self, size = 0):
+    def __init__(self, size = 1):
         self.size = size
     def __call__(self, data):
         img_height = data.shape[0]
         img_width = data.shape[1]
         zero_pad = np.zeros(((2*self.size)+img_height, (2*self.size)+img_width))
-        padded_data = zero_pad[size:img_height+size+1][size:img_height+size+1] = data
-        return padded_data
+        zero_pad[self.size:img_height+self.size, self.size:img_height+self.size] = data
+        return zero_pad
 
 class Relu:
     def __call__(self, data):
@@ -33,3 +33,25 @@ class MaxPool:
                 # storing maximum value
                 pooled_data[i][j] = np.max(data[h_index: h_index+self.pool_size, w_index: w_index+self.pool_size])
         return pooled_data
+
+class ConvLayer:
+    def __init__(self, stride = 1, kernels = np.ones((1, 3, 3))):
+        self.stride = stride
+        self.kernels = kernels
+        self.num_kernels = kernels.shape[0]
+        self.kernel_size = kernels.shape[1]
+    def __call__(self, data):
+        img_height = data.shape[0]
+        img_width = data.shape[1]
+        conv_img_height = int((img_height-self.kernel_size)/self.stride)+1
+        conv_img_width = int((img_width-self.kernel_size)/self.stride)+1
+        print(conv_img_height, conv_img_width)
+        conv_data = np.zeros((self.num_kernels, conv_img_height, conv_img_width))
+        #Convolve image with filter pixel by pixel
+        for num in range(self.num_kernels):
+            for i in range(0, conv_img_height, self.stride):
+                for j in range(0, conv_img_width, self.stride):
+                    temp = self.kernels[num]*data[i:(i+self.kernel_size), j:(j+self.kernel_size)]
+                    conv_data[num][i][j] = np.sum(temp)
+        return conv_data
+
