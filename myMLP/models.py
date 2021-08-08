@@ -106,3 +106,4 @@ class Flatten:
         for i in data:
             self.data_2d.append(i.reshape(1, -1))
         return np.array(self.data_2d)
+

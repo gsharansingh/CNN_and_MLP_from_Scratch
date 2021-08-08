@@ -36,12 +36,7 @@ class Linear(Node):
         X = self.in_nodes[0].value
         W = self.in_nodes[1].value
         b = self.in_nodes[2].value
-        print(X.shape)
-        print(W.shape)
-        print(b.shape)
-        print(np.matmul(X, W).shape)
-        print((np.dot(X, W)+b).shape)
-        self.value = np.dot(X, W) + b
+        self.value = np.matmul(X, W) + b
 
     def backward(self):
         self.gradients = {n: np.zeros_like(n.value) for n in self.in_nodes}
@@ -49,7 +44,7 @@ class Linear(Node):
             grad_value = n.gradients[self]
             self.gradients[self.in_nodes[0]] += np.dot(grad_value, self.in_nodes[1].value.T)
             self.gradients[self.in_nodes[1]] += np.dot(self.in_nodes[0].value.T, grad_value)
-            self.gradients[self.in_nodes[2]] += np.sum(grad_value, axis=0, keepdims=False)
+            self.gradients[self.in_nodes[2]] += np.sum(grad_value)#, axis=0, keepdims=False)
 
 class Sigmoid(Node):
     def __init__(self, z):
@@ -67,8 +62,6 @@ class Sigmoid(Node):
         for n in self.out_nodes:
             grad_value = n.gradients[self]
             sigmoid = self.value
-            print(sigmoid)
-            print(grad_value)
             self.gradients[self.in_nodes[0]] += sigmoid * (1 - sigmoid) * grad_value
 
 class Softmax(Node):
@@ -100,11 +93,11 @@ class MSE(Node):
         Node.__init__(self, [y_hat, y])
 
     def forward(self):
-        y_hat = self.in_nodes[0].value.reshape(-1, 1)
-        y = self.in_nodes[1].value.reshape(-1, 1)
-        self.m = self.in_nodes[0].value.shape[0]
+        y_hat = self.in_nodes[0].value
+        y = self.in_nodes[1].value
+        self.m = self.in_nodes[0].value.shape[1]
         self.diff = y_hat - y
-        self.value = (1/2) * np.mean(np.square(self.diff))
+        self.value = (1/2) * np.mean(np.square(self.diff), axis = 0)
 
     def backward(self):
         self.gradients[self.in_nodes[0]] = (self.diff / self.m)
@@ -130,10 +123,8 @@ class CrossEntropy(Node):
 
 def topological_sort(feed_dict):
     input_nodes = [n for n in feed_dict.keys()]
-    print(input_nodes)
     G = {}
     nodes = [n for n in input_nodes]
-    print(nodes)
     while len(nodes) > 0:
         n = nodes.pop(0)
         if n not in G:
