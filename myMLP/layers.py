@@ -44,7 +44,10 @@ class Linear(Node):
             grad_value = n.gradients[self]
             self.gradients[self.in_nodes[0]] += np.dot(grad_value, self.in_nodes[1].value.T)
             self.gradients[self.in_nodes[1]] += np.dot(self.in_nodes[0].value.T, grad_value)
-            self.gradients[self.in_nodes[2]] += np.sum(grad_value)#, axis=0, keepdims=False)
+            self.gradients[self.in_nodes[2]] += np.sum(np.sum(grad_value, axis =0), axis=0, keepdims=False)
+        
+            self.in_nodes[1].value = self.gradients[self.in_nodes[1]] *0.05
+            self.in_nodes[2].value = self.gradients[self.in_nodes[2]] *0.05
 
 class Sigmoid(Node):
     def __init__(self, z):
@@ -91,6 +94,7 @@ class Softmax(Node):
 class MSE(Node):
     def __init__(self, y_hat, y):
         Node.__init__(self, [y_hat, y])
+        self.Error = []
 
     def forward(self):
         y_hat = self.in_nodes[0].value
@@ -98,6 +102,7 @@ class MSE(Node):
         self.m = self.in_nodes[0].value.shape[1]
         self.diff = y_hat - y
         self.value = (1/2) * np.mean(np.square(self.diff), axis = 0)
+        self.Error.append(np.sum(self.value))
 
     def backward(self):
         self.gradients[self.in_nodes[0]] = (self.diff / self.m)

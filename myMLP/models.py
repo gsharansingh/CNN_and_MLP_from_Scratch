@@ -70,8 +70,9 @@ class Sequential:
         self.arg_layers = arg_layers
         self.input_nodes = []
     
-    def fit(self, X, y):
+    def fit(self, X, y, epochs = 1):
         x = self.arg_layers[0](X)
+        print(self.arg_layers[0].X)
         for layer in self.arg_layers[1:-1]:
             x = layer(x)
         self.arg_layers[-1](x, y)
@@ -80,11 +81,13 @@ class Sequential:
                 self.input_nodes += layer.input_nodes
 
         self.graph = layers.topological_sort_list(self.input_nodes)
-        layers.forward_and_backward(self.graph)
+        for i in range(epochs):
+            layers.forward_and_backward(self.graph)
 
     def predict(self, x):
-        self.graph[0].value = x
-        for n in self.graph[:-1]:
+        print(self.graph[0])
+        self.arg_layers[0].X.value = x
+        for n in self.graph:
             n.forward()
 
         return self.graph[-1].value
