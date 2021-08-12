@@ -17,7 +17,7 @@ class Linear:
         if b_:
             self.b.value = b_
         else:
-            self.b.value = 2*np.random.random((self.n_hidden, 1))-1
+            self.b.value = 2*np.random.random((1, self.n_hidden))-1
 
         return layers.Linear(self.X, self.W, self.b)
 

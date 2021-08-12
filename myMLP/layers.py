@@ -40,11 +40,14 @@ class Linear(Node):
 
     def backward(self):
         self.gradients = {n: np.zeros_like(n.value) for n in self.in_nodes}
+        print([i.shape for i in self.gradients.values()])
         for n in self.out_nodes:
             grad_value = n.gradients[self]
+            print(self.gradients[self.in_nodes[2]])
+            print(np.sum(grad_value,axis = 0, keepdims = False))
             self.gradients[self.in_nodes[0]] += np.dot(grad_value, self.in_nodes[1].value.T)
             self.gradients[self.in_nodes[1]] += np.dot(self.in_nodes[0].value.T, grad_value)
-            self.gradients[self.in_nodes[2]] += np.sum(np.sum(grad_value, axis =0), axis=0, keepdims=False)
+            self.gradients[self.in_nodes[2]] += np.sum(grad_value, axis=0, keepdims=False)
         
             self.in_nodes[1].value = self.gradients[self.in_nodes[1]] *0.05
             self.in_nodes[2].value = self.gradients[self.in_nodes[2]] *0.05
@@ -62,6 +65,7 @@ class Sigmoid(Node):
 
     def backward(self):
         self.gradients = {n: np.zeros_like(n.value) for n in self.in_nodes}
+        print([i.shape for i in self.gradients.values()])
         for n in self.out_nodes:
             grad_value = n.gradients[self]
             sigmoid = self.value
@@ -107,6 +111,7 @@ class MSE(Node):
     def backward(self):
         self.gradients[self.in_nodes[0]] = (self.diff / self.m)
         self.gradients[self.in_nodes[1]] = -(self.diff / self.m)
+        print([i.shape for i in self.gradients.values()])
 
 class CrossEntropy(Node):
     def __init__(self, y_hat, y):
